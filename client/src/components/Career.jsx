@@ -34,7 +34,6 @@ const Career = () => {
   return (
     <section className="section career-section" id="career">
       <div className="career-container">
-        <p className="section-label">03 — Experience</p>
         <h2>
           My career <span>&</span>
           <br />

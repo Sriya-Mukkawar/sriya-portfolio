@@ -4,7 +4,6 @@ const WhatIDo = () => (
     <section className="section whatIDO" id="what-i-do">
     <div className="what-layout">
       <div className="what-heading">
-        <p className="section-label">02 — What I do</p>
         <h2>What I do</h2>
       </div>
       <div className="what-grid what-box-in">

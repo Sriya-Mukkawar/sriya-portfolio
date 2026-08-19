@@ -604,14 +604,6 @@ h2.landing-info-h2 {
   padding: 120px 0;
 }
 
-.section-label {
-  font-size: 13px;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 16px;
-}
-
 .section h2 {
   font-size: clamp(36px, 6vw, 72px);
   letter-spacing: -0.05em;
@@ -620,14 +612,14 @@ h2.landing-info-h2 {
   margin: 0 0 28px;
 }
 
-.about-me > p:not(.section-label) {
+.about-me > p {
   max-width: 720px;
   font-size: 18px;
   line-height: 1.55;
   color: #3f3b45;
 }
 
-.about-me > p:not(.section-label) + p {
+.about-me > p + p {
   margin-top: 16px;
 }
 
@@ -695,10 +687,6 @@ h2.landing-info-h2 {
 .career-container {
   width: min(1100px, calc(100% - 48px));
   margin: 0 auto;
-}
-
-.career-section > .career-container > .section-label {
-  text-align: center;
 }
 
 .career-section h2 {
@@ -1701,10 +1689,6 @@ h2.landing-info-h2 {
     font-size: clamp(36px, 8vw, 52px);
   }
 
-  .career-section > .career-container > .section-label {
-    text-align: left;
-  }
-
   .career-info-box {
     flex-direction: column;
     gap: 10px;
@@ -1893,7 +1877,7 @@ h2.landing-info-h2 {
     padding: 48px 0;
   }
 
-  .about-me > p:not(.section-label) {
+  .about-me > p {
     font-size: 16px;
   }
 

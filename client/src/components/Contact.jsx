@@ -54,7 +54,6 @@ const Contact = () => {
             Start a conversation →
           </a>
         </div>
-        <p className="section-label">06 — Contact</p>
         <h2>{content.developer.fullName}</h2>
         <div className="contact-grid">
           <div className="contact-card">
