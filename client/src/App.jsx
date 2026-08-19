@@ -51,7 +51,7 @@ const Portfolio = () => {
 
   useEffect(() => {
     document.body.classList.toggle("loading", isLoading);
-    document.title = `${content.developer.fullName} — ${content.developer.title}`;
+    document.title = content.developer.fullName;
     if (!isLoading) {
       requestAnimationFrame(() => ScrollTrigger.refresh());
     }
