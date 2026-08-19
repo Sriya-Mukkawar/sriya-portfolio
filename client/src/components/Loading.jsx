@@ -12,23 +12,21 @@ const marqueeItems = Array.from({ length: 12 }, () => [
 const Loading = ({ percent }) => {
   const { setIsLoading } = useLoading();
   const [ready, setReady] = useState(false);
-  const [leaving, setLeaving] = useState(false);
 
   useEffect(() => {
-    if (percent >= 100) {
-      const timer = setTimeout(() => setReady(true), 400);
-      return () => clearTimeout(timer);
-    }
-  }, [percent]);
+    if (percent < 100) return undefined;
+    setReady(true);
+    const timer = setTimeout(() => setIsLoading(false), 1000);
+    return () => clearTimeout(timer);
+  }, [percent, setIsLoading]);
 
-  const enter = () => {
-    if (!ready) return;
-    setLeaving(true);
-    setTimeout(() => setIsLoading(false), 700);
-  };
+  useEffect(() => {
+    const failsafe = setTimeout(() => setIsLoading(false), 5000);
+    return () => clearTimeout(failsafe);
+  }, [setIsLoading]);
 
   return (
-    <div className={`loader ${leaving ? "is-gone" : ""}`}>
+    <div className="loader">
       <div className="loader-watermark">{content.developer.fullName.replace(" ", "")}</div>
       <div className="loader-marquee">
         <div className="loader-marquee-track">
@@ -38,10 +36,8 @@ const Loading = ({ percent }) => {
         </div>
       </div>
       <div className="loader-center">
-        <button className="loader-btn" onClick={enter} disabled={!ready}>
-          {ready ? "Welcome" : `Loading ${Math.min(percent, 99)}%`}
-        </button>
-        <div className="loader-percent">{ready ? "Click to enter" : "Preparing the experience"}</div>
+        <div className="loader-btn">{ready ? "Welcome" : `Loading ${Math.min(percent, 99)}%`}</div>
+        <div className="loader-percent">{ready ? "Entering" : "Preparing the experience"}</div>
       </div>
       <div className="loader-marquee">
         <div className="loader-marquee-track" style={{ animationDirection: "reverse" }}>

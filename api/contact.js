@@ -1,3 +1,5 @@
+const { sendContactEmail } = require("../lib/sendContactEmail");
+
 module.exports = async function handler(req, res) {
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
@@ -13,12 +15,15 @@ module.exports = async function handler(req, res) {
     });
   }
 
-  console.log("New contact message:", {
-    name: name.trim(),
-    email: email.trim(),
-    message: message.trim(),
-    createdAt: new Date().toISOString(),
-  });
+  try {
+    await sendContactEmail({ name, email, message });
+  } catch (err) {
+    console.error("Contact email failed:", err);
+    return res.status(502).json({
+      ok: false,
+      error: err.message || "Could not send your message.",
+    });
+  }
 
   return res.status(200).json({
     ok: true,

@@ -8,30 +8,33 @@ export const LoadingProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   const apiRef = useRef(null);
 
-  useEffect(() => {
-    const api = createProgress(setProgress);
-    apiRef.current = api;
-    return () => {
-      api.stop();
-      if (apiRef.current === api) apiRef.current = null;
-    };
+  const bumpProgress = useCallback((value) => {
+    setProgress((prev) => Math.max(prev, value));
   }, []);
 
+  useEffect(() => {
+    const api = createProgress(bumpProgress);
+    apiRef.current = api;
+    return () => api.stop();
+  }, [bumpProgress]);
+
   const finishLoadingAssets = useCallback(() => {
-    if (apiRef.current) return apiRef.current.loaded();
-    setProgress(100);
+    if (apiRef.current) {
+      return apiRef.current.loaded().finally(() => bumpProgress(100));
+    }
+    bumpProgress(100);
     return Promise.resolve();
-  }, []);
+  }, [bumpProgress]);
 
   const value = useMemo(
     () => ({
       progress,
-      setProgress,
+      setProgress: bumpProgress,
       isLoading,
       setIsLoading,
       finishLoadingAssets,
     }),
-    [progress, isLoading, finishLoadingAssets]
+    [progress, isLoading, bumpProgress, finishLoadingAssets]
   );
 
   return (

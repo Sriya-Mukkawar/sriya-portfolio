@@ -13,14 +13,32 @@ const Contact = () => {
     e.preventDefault();
     setStatus("Sending...");
     try {
-      const res = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to send");
-      setStatus(data.message);
+      const res = await fetch(
+        `https://formsubmit.co/ajax/${encodeURIComponent(content.social.email)}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify({
+            name: form.name.trim(),
+            email: form.email.trim(),
+            message: form.message.trim(),
+            _subject: `Portfolio message from ${form.name.trim()}`,
+            _replyto: form.email.trim(),
+            _template: "table",
+            _captcha: false,
+          }),
+        }
+      );
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || data.success === false || data.success === "false") {
+        throw new Error(data.message || "Failed to send");
+      }
+      setStatus(
+        data.message || "Thanks for reaching out. I’ll get back to you soon."
+      );
       setForm({ name: "", email: "", message: "" });
     } catch (err) {
       setStatus(err.message);

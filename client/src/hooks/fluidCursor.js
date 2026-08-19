@@ -1140,7 +1140,17 @@ const useFluidCursor = () => {
  return radius;
  }
 
+ function isOnForm(e) {
+ const formSel = 'input, textarea, select, form';
+ const active = document.activeElement;
+ if (active && typeof active.closest === 'function' && active.closest(formSel)) {
+ return true;
+ }
+ return Boolean(e?.target?.closest?.(formSel));
+ }
+
  window.addEventListener('mousedown', (e) => {
+ if (isOnForm(e)) return;
  let pointer = pointers[0];
  let posX = scaleByPixelRatio(e.clientX);
  let posY = scaleByPixelRatio(e.clientY);
@@ -1149,6 +1159,8 @@ const useFluidCursor = () => {
  });
 
  document.body.addEventListener('mousemove', function handleFirstMouseMove(e) {
+ document.body.removeEventListener('mousemove', handleFirstMouseMove);
+ if (isOnForm(e)) return;
  let pointer = pointers[0];
  let posX = scaleByPixelRatio(e.clientX);
  let posY = scaleByPixelRatio(e.clientY);
@@ -1156,12 +1168,13 @@ const useFluidCursor = () => {
 
  update();
  updatePointerMoveData(pointer, posX, posY, color);
-
- // Remove this event listener after the first mousemove event
- document.body.removeEventListener('mousemove', handleFirstMouseMove);
  });
 
  window.addEventListener('mousemove', (e) => {
+ if (isOnForm(e)) {
+ pointers[0].moved = false;
+ return;
+ }
  let pointer = pointers[0];
  let posX = scaleByPixelRatio(e.clientX);
  let posY = scaleByPixelRatio(e.clientY);
@@ -1173,6 +1186,8 @@ const useFluidCursor = () => {
  document.body.addEventListener(
  'touchstart',
  function handleFirstTouchStart(e) {
+ document.body.removeEventListener('touchstart', handleFirstTouchStart);
+ if (isOnForm(e)) return;
  const touches = e.targetTouches;
  let pointer = pointers[0];
 
@@ -1183,13 +1198,11 @@ const useFluidCursor = () => {
  update();
  updatePointerDownData(pointer, touches[i].identifier, posX, posY);
  }
-
- // Remove this event listener after the first touchstart event
- document.body.removeEventListener('touchstart', handleFirstTouchStart);
  }
  );
 
  window.addEventListener('touchstart', (e) => {
+ if (isOnForm(e)) return;
  const touches = e.targetTouches;
  let pointer = pointers[0];
  for (let i = 0; i < touches.length; i++) {
@@ -1202,6 +1215,10 @@ const useFluidCursor = () => {
  window.addEventListener(
  'touchmove',
  (e) => {
+ if (isOnForm(e)) {
+ pointers[0].moved = false;
+ return;
+ }
  const touches = e.targetTouches;
  let pointer = pointers[0];
  for (let i = 0; i < touches.length; i++) {

@@ -1,7 +1,11 @@
 import express from "express";
 import cors from "cors";
 import path from "path";
+import { createRequire } from "module";
 import { fileURLToPath } from "url";
+
+const require = createRequire(import.meta.url);
+const { sendContactEmail } = require("../lib/sendContactEmail.js");
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -10,13 +14,11 @@ const PORT = process.env.PORT || 5001;
 app.use(cors());
 app.use(express.json());
 
-const messages = [];
-
 app.get("/api/health", (_req, res) => {
   res.json({ ok: true, name: "Sriya Mukkawar Portfolio API" });
 });
 
-app.post("/api/contact", (req, res) => {
+app.post("/api/contact", async (req, res) => {
   const { name, email, message } = req.body || {};
 
   if (!name?.trim() || !email?.trim() || !message?.trim()) {
@@ -26,16 +28,15 @@ app.post("/api/contact", (req, res) => {
     });
   }
 
-  const entry = {
-    id: Date.now().toString(),
-    name: name.trim(),
-    email: email.trim(),
-    message: message.trim(),
-    createdAt: new Date().toISOString(),
-  };
-
-  messages.unshift(entry);
-  console.log("New contact message:", entry);
+  try {
+    await sendContactEmail({ name, email, message });
+  } catch (err) {
+    console.error("Contact email failed:", err);
+    return res.status(502).json({
+      ok: false,
+      error: err.message || "Could not send your message.",
+    });
+  }
 
   res.json({
     ok: true,
